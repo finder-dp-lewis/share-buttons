@@ -2,8 +2,8 @@ var urlvars = require('./urlvars.js');
 
 module.exports = function (link) {
   return {
-    hostname: link.hostname,
+    host: link.hostname,
     href: link.href,
-    parameters: urlvars(link.href)
+    params: urlvars(link.href)
   };
 }

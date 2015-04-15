@@ -3,32 +3,32 @@
 var Sharebuttons = require('./sharebuttons.js');
 
 Sharebuttons.prototype.addProviders([
-  require('./providers/facebook.js'),
-  require('./providers/twitter.js'),
-  require('./providers/stumbleupon.js'),
-  require('./providers/reddit.js')
+  require('./provider/facebook.js'),
+  require('./provider/twitter.js'),
+  require('./provider/stumbleupon.js'),
+  require('./provider/reddit.js')
 ]);
 
 window.Sharebuttons = Sharebuttons;
 
 
-},{"./providers/facebook.js":2,"./providers/reddit.js":3,"./providers/stumbleupon.js":4,"./providers/twitter.js":5,"./sharebuttons.js":6}],2:[function(require,module,exports){
-var parseLink = require('../utils/parselink.js'),
-  JSONP = require('../utils/jsonp.js');
+},{"./provider/facebook.js":2,"./provider/reddit.js":3,"./provider/stumbleupon.js":4,"./provider/twitter.js":5,"./sharebuttons.js":6}],2:[function(require,module,exports){
+var parseLink = require('../util/parselink.js'),
+  JSONP = require('../util/jsonp.js');
 
 module.exports = {
   id: 'facebook',
 
   fetchCount: function (button, callback) {
     JSONP.get('https://graph.facebook.com', {
-      id: decodeURIComponent(parseLink(button).parameters.u)
+      id: decodeURIComponent(parseLink(button).params.u)
     }, function (result) {
       callback(result.shares);
     });
   }
 };
 
-},{"../utils/jsonp.js":7,"../utils/parselink.js":9}],3:[function(require,module,exports){
+},{"../util/jsonp.js":7,"../util/parselink.js":9}],3:[function(require,module,exports){
 module.exports = {
   id: 'reddit'
 };
@@ -39,28 +39,27 @@ module.exports = {
 };
 
 },{}],5:[function(require,module,exports){
-var parseLink = require('../utils/parselink.js'),
-  JSONP = require('../utils/jsonp.js');
+var parseLink = require('../util/parselink.js'),
+  JSONP = require('../util/jsonp.js');
 
 module.exports = {
   id: 'twitter',
   fetchCount: function (button, callback) {
     JSONP.get('https://cdn.api.twitter.com/1/urls/count.json', {
-      url: decodeURIComponent(parseLink(button).parameters.url)
+      url: decodeURIComponent(parseLink(button).params.url)
     }, function (result) {
       callback(result.count);
     });
   }
 };
 
-},{"../utils/jsonp.js":7,"../utils/parselink.js":9}],6:[function(require,module,exports){
+},{"../util/jsonp.js":7,"../util/parselink.js":9}],6:[function(require,module,exports){
 /*jslint browser: true*/
-var mergeobjects = require('./utils/mergeobjects.js'),
-  parseLink = require('./utils/parselink.js');
+var mergeobjects = require('./util/mergeobjects.js');
 
 function basicProviderVerification(button, id) {
   var returnVal = false;
-  if (parseLink(button).hostname.indexOf(id) !== -1) {
+  if (button.hostname.indexOf(id) !== -1) {
     returnVal = true;
   }
   return returnVal;
@@ -140,21 +139,17 @@ Sharebuttons.prototype = {
     button.className += this.settings.loadedClass;
   },
 
-  addProvider: function (provider) {
-    this.providers.push(provider);
-  },
-
   addProviders: function (providers) {
     var i;
     for (i = 0; i < providers.length; i = i + 1) {
-      this.addProvider(providers[i]);
+      this.providers.push(providers[i]);
     }
   }
 };
 
 module.exports = Sharebuttons;
 
-},{"./utils/mergeobjects.js":8,"./utils/parselink.js":9}],7:[function(require,module,exports){
+},{"./util/mergeobjects.js":8}],7:[function(require,module,exports){
 module.exports = (function () {
   var counter = 0,
     head,
@@ -258,9 +253,9 @@ var urlvars = require('./urlvars.js');
 
 module.exports = function (link) {
   return {
-    hostname: link.hostname,
+    host: link.hostname,
     href: link.href,
-    parameters: urlvars(link.href)
+    params: urlvars(link.href)
   };
 }
 

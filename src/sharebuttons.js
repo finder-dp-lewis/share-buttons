@@ -1,10 +1,9 @@
 /*jslint browser: true*/
-var mergeobjects = require('./utils/mergeobjects.js'),
-  parseLink = require('./utils/parselink.js');
+var mergeobjects = require('./util/mergeobjects.js');
 
 function basicProviderVerification(button, id) {
   var returnVal = false;
-  if (parseLink(button).hostname.indexOf(id) !== -1) {
+  if (button.hostname.indexOf(id) !== -1) {
     returnVal = true;
   }
   return returnVal;
@@ -84,14 +83,10 @@ Sharebuttons.prototype = {
     button.className += this.settings.loadedClass;
   },
 
-  addProvider: function (provider) {
-    this.providers.push(provider);
-  },
-
   addProviders: function (providers) {
     var i;
     for (i = 0; i < providers.length; i = i + 1) {
-      this.addProvider(providers[i]);
+      this.providers.push(providers[i]);
     }
   }
 };

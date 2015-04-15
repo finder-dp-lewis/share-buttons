@@ -2,10 +2,10 @@
 var Sharebuttons = require('./sharebuttons.js');
 
 Sharebuttons.prototype.addProviders([
-  require('./providers/facebook.js'),
-  require('./providers/twitter.js'),
-  require('./providers/stumbleupon.js'),
-  require('./providers/reddit.js')
+  require('./provider/facebook.js'),
+  require('./provider/twitter.js'),
+  require('./provider/stumbleupon.js'),
+  require('./provider/reddit.js')
 ]);
 
 window.Sharebuttons = Sharebuttons;
