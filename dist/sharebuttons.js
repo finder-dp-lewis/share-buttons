@@ -142,6 +142,7 @@ Sharebuttons.prototype = {
           ev.stopPropagation();
         } else {
           ev.returnValue = false; // thanks IE8          
+          ev.cancelBubble = true; // thanks IE8  
         }
 
         target = ev.currentTarget || ev.srcElement;
