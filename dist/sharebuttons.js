@@ -146,7 +146,7 @@ Sharebuttons.prototype = {
 
         target = ev.currentTarget || ev.srcElement;
 
-        window.open(target.href, 'sharebuttons', 'width=520,height=420');
+        window.open(target.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
 
         // if there's a callback for sharing trigger it with some data
         if (that.settings.onShare) {
