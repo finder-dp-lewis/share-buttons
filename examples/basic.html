@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <title>Basic share buttons example</title>
+</head>
+<body>
+
+<ul>
+	<li><a data-sharebutton href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.finder.com.au">Facebook <span data-sharecount>0</span></a></li>
+	<li><a data-sharebutton href="https://twitter.com/intent/tweet?text=Twitter%20Text&amp;url=http%3A%2F%2Fwww.finder.com.au%2F&amp;via=findercomau&amp;original_referer=
+">Twitter <span data-sharecount>0</span></a></li>
+</ul>
+
+
+<script src="../src/sharebuttons.js"></script>
+<script src="../src/providers/facebook.js"></script>
+<script src="../src/providers/twitter.js"></script>
+<script>
+	var sharebuttons = new Sharebuttons('[data-sharebutton]');
+</script>
+
+</body>
+</html>
