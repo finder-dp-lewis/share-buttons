@@ -6,4 +6,4 @@ module.exports = function (link) {
     href: link.href,
     params: urlvars(link.href)
   };
-}
+};

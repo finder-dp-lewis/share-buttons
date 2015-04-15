@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "",
+    "test": "./node_modules/.bin/jshint ./src && ./node_modules/.bin/karma start",
     "start": "./node_modules/.bin/browserify ./src/app.js -o ./dist/sharebuttons.js && ./node_modules/.bin/uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js -m"
   },
   "repository": {
@@ -19,7 +19,13 @@
   "homepage": "https://github.com/findercomau/share-buttons",
   "devDependencies": {
     "browserify": "^9.0.8",
+    "jasmine-core": "^2.2.0",
     "jshint": "^2.7.0",
+    "karma": "^0.12.31",
+    "karma-browserify": "^4.1.2",
+    "karma-cli": "0.0.4",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4",
     "uglify-js": "^2.4.20"
   }
 }
