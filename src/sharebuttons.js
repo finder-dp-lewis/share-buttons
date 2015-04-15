@@ -89,7 +89,7 @@ Sharebuttons.prototype = {
 
   insertCounter: function (button, number) {
     button.querySelector(this.settings.shareCountSelector).innerText = number;
-    button.classList.add(this.settings.loadedCountClass);
+    button.className = button.className + this.settings.loadedCountClass;
   },
 
   parseHref: function (link) {
