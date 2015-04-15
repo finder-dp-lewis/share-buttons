@@ -3,9 +3,9 @@
 var Sharebuttons = require('../sharebuttons.js');
 
 module.exports = {
-  'id': 'facebook',
+  id: 'facebook',
 
-  'neededBy': function (button) {
+  neededBy: function (button) {
     var returnVal = false, hrefData = Sharebuttons.prototype.parseHref(button);
     if (hrefData.hostname.indexOf(this.id) !== -1) {
       returnVal = true;

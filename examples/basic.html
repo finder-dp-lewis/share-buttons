@@ -35,7 +35,13 @@
 
 
 <script src="../dist/sharebuttons.js"></script>
-
+<script>
+	var sharebuttons = new Sharebuttons('[data-sharebutton]', {
+		'onShare': function (result) {
+			console.log(result);
+		}
+	});
+</script>
 
 </body>
 </html>

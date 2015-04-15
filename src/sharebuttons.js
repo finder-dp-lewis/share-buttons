@@ -25,30 +25,16 @@ Sharebuttons.prototype = {
   },
 
   assessButtons: function (buttons, providers) {
-    var i, that = this;
+    var i;
     // loop through buttons and determine what provider
-
-    function eventHandler(ev) {
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (that.settings.newWindow === true) {
-        window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420');
-      }
-    }
-
     for (i = 0; i < buttons.length; i = i + 1) {
-      buttons[i].addEventListener('click', eventHandler, false);
-
-      if (buttons[i].querySelector('[data-sharecount]')) {
-        // add click handler to buttons to make them pop up
-        this.checkProviders(buttons[i], providers);
-      }
-
+      // add click handler to buttons to make them pop up
+      this.updateDOM(buttons[i], this.checkProviders(buttons[i], providers));
     }
   },
 
   checkProviders: function (button, providers) {
-    var i, validProvider, that = this;
+    var i, validProvider;
 
     // loop through the providers and see if the button matches any of them
     for (i = 0; i < providers.length; i = i + 1) {
@@ -57,12 +43,31 @@ Sharebuttons.prototype = {
       }
     }
 
-    if (validProvider) {
-      validProvider.fetchShareCount(button, function (count) {
+    return validProvider;
+  },
+
+  updateDOM: function (button, provider) {
+    var that = this;
+    button.addEventListener('click', function (ev) {
+      if (that.settings.newWindow === true) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420');
+
+        if (that.settings.onShare) {
+          that.settings.onShare({
+            provider: provider.id
+          });
+        }
+      }
+    }, false);
+
+    // only fetch the count if there's a dom element for it to go in
+    if (button.querySelector('[data-sharecount]')) {
+      provider.fetchShareCount(button, function (count) {
         that.insertCounter(button, count);
       });
     }
-
   },
 
   insertCounter: function (button, number) {
