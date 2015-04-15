@@ -134,27 +134,23 @@ Sharebuttons.prototype = {
 
 
     addEvent(button, 'click', function (ev) {
-      var target;
       // if we're opening a new window then cancel default behaviour
-      if (that.settings.newWindow === true) {
+      // but we'll let IE8 fallback to a default link
+      if (that.settings.newWindow === true && ev.preventDefault) {
         if (ev.preventDefault && ev.stopPropagation) {
           ev.preventDefault();
           ev.stopPropagation();
-        } else {
-          ev.returnValue = false; // thanks IE8          
-          ev.cancelBubble = true; // thanks IE8  
+
+          window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
+
+          // if there's a callback for sharing trigger it with some data
+          if (that.settings.onShare) {
+            that.settings.onShare({
+              provider: provider ? provider.id : that.settings.defaultProviderId
+            });
+          } // end if onShare
         }
 
-        target = ev.currentTarget || ev.srcElement;
-
-        window.open(target.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
-
-        // if there's a callback for sharing trigger it with some data
-        if (that.settings.onShare) {
-          that.settings.onShare({
-            provider: provider ? provider.id : that.settings.defaultProviderId
-          });
-        } // end if onShare
       } // end if newWindow
     }, false);
 
