@@ -75,7 +75,7 @@ Sharebuttons.prototype = {
   providers: [], // array of provider plugins
 
   defaults: {
-    'loadedClass': 'sharebuttons-count-loaded', // class applied to the share button once the count is fetched
+    'loadedClass': 'is-loaded', // class applied to the share button once the count is fetched
     'countSelector': '[data-sharecount]', // selector for the child element that contains the count number
     'newWindow': true, // determines whether a new window should be opened
     'defaultProviderId': 'unknown', // if there is no provider plugin, the ID will default to this
@@ -108,6 +108,18 @@ Sharebuttons.prototype = {
   updateDOM: function (button, provider) {
     var that = this;
 
+    this.bindEvent(button, provider);
+
+    // only fetch the count if there's a dom element for it to go in
+    if (button.querySelector(that.settings.countSelector)) {
+      provider.fetchCount(button, function (count) {
+        that.insertCount(button, count);
+      });
+    }
+  },
+
+  bindEvent: function (button, provider) {
+    var that = this;
     if (button.addEventListener) {
       button.addEventListener('click', function (ev) {
         // if we're opening a new window then cancel default behaviour
@@ -124,13 +136,6 @@ Sharebuttons.prototype = {
           });
         } // end if newWindow
       }, false);
-    }
-
-    // only fetch the count if there's a dom element for it to go in
-    if (button.querySelector(that.settings.countSelector)) {
-      provider.fetchCount(button, function (count) {
-        that.insertCount(button, count);
-      });
     }
   },
 
