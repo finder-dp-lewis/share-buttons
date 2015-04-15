@@ -1,17 +1,12 @@
-/*global Sharebuttons*/
-
-var Sharebuttons = require('../sharebuttons.js');
+var parseLink = require('../utils/parselink.js'),
+  JSONP = require('../utils/jsonp.js');
 
 module.exports = {
   id: 'facebook',
 
-  neededBy: function (button) {
-    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
-  },
-
-  fetchShareCount: function (button, callback) {
-    Sharebuttons.prototype.jsonp('https://graph.facebook.com', {
-      id: decodeURIComponent(Sharebuttons.prototype.parseHref(button).parameters.u)
+  fetchCount: function (button, callback) {
+    JSONP.get('https://graph.facebook.com', {
+      id: decodeURIComponent(parseLink(button).parameters.u)
     }, function (result) {
       callback(result.shares);
     });

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "",
-    "start": "./node_modules/.bin/browserify ./src/app.js -o ./dist/sharebuttons.js && ./node_modules/.bin/uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js"
+    "start": "./node_modules/.bin/browserify ./src/app.js -o ./dist/sharebuttons.js && ./node_modules/.bin/uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js -m"
   },
   "repository": {
     "type": "git",

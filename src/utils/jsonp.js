@@ -1,4 +1,4 @@
-var JSONP = (function () {
+module.exports = (function () {
   var counter = 0,
     head,
     window = this,
@@ -76,5 +76,3 @@ var JSONP = (function () {
     init: setDefaults
   };
 }());
-
-module.exports = JSONP;

@@ -1,4 +1,4 @@
-function getUrlVars(href) {
+module.exports = function (href) {
   var vars = [],
     hash,
     i,
@@ -9,6 +9,4 @@ function getUrlVars(href) {
     vars[hash[0]] = hash[1];
   }
   return vars;
-}
-
-module.exports = getUrlVars;
+};

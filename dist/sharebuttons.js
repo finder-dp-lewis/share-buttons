@@ -2,126 +2,103 @@
 /*jslint browser: true*/
 var Sharebuttons = require('./sharebuttons.js');
 
-Sharebuttons.prototype.addProvider(require('./providers/facebook.js'));
-Sharebuttons.prototype.addProvider(require('./providers/twitter.js'));
-Sharebuttons.prototype.addProvider(require('./providers/stumbleupon.js'));
-Sharebuttons.prototype.addProvider(require('./providers/reddit.js'));
+Sharebuttons.prototype.addProviders([
+  require('./providers/facebook.js'),
+  require('./providers/twitter.js'),
+  require('./providers/stumbleupon.js'),
+  require('./providers/reddit.js')
+]);
 
 window.Sharebuttons = Sharebuttons;
 
 
 },{"./providers/facebook.js":2,"./providers/reddit.js":3,"./providers/stumbleupon.js":4,"./providers/twitter.js":5,"./sharebuttons.js":6}],2:[function(require,module,exports){
-/*global Sharebuttons*/
-
-var Sharebuttons = require('../sharebuttons.js');
+var parseLink = require('../utils/parselink.js'),
+  JSONP = require('../utils/jsonp.js');
 
 module.exports = {
   id: 'facebook',
 
-  neededBy: function (button) {
-    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
-  },
-
-  fetchShareCount: function (button, callback) {
-    Sharebuttons.prototype.jsonp('https://graph.facebook.com', {
-      id: decodeURIComponent(Sharebuttons.prototype.parseHref(button).parameters.u)
+  fetchCount: function (button, callback) {
+    JSONP.get('https://graph.facebook.com', {
+      id: decodeURIComponent(parseLink(button).parameters.u)
     }, function (result) {
       callback(result.shares);
     });
   }
 };
 
-},{"../sharebuttons.js":6}],3:[function(require,module,exports){
-/*global Sharebuttons*/
-
-var Sharebuttons = require('../sharebuttons.js');
-
+},{"../utils/jsonp.js":7,"../utils/parselink.js":9}],3:[function(require,module,exports){
 module.exports = {
-  id: 'reddit',
-
-  neededBy: function (button) {
-    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
-  }
+  id: 'reddit'
 };
 
-},{"../sharebuttons.js":6}],4:[function(require,module,exports){
-/*global Sharebuttons*/
-
-var Sharebuttons = require('../sharebuttons.js');
-
+},{}],4:[function(require,module,exports){
 module.exports = {
-  id: 'stumbleupon',
-
-  neededBy: function (button) {
-    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
-  }
+  id: 'stumbleupon'
 };
 
-},{"../sharebuttons.js":6}],5:[function(require,module,exports){
-/*global Sharebuttons*/
-var Sharebuttons = require('../sharebuttons.js');
+},{}],5:[function(require,module,exports){
+var parseLink = require('../utils/parselink.js'),
+  JSONP = require('../utils/jsonp.js');
 
 module.exports = {
   id: 'twitter',
-
-  neededBy: function (button) {
-    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
-  },
-
-  fetchShareCount: function (button, callback) {
-    Sharebuttons.prototype.jsonp('https://cdn.api.twitter.com/1/urls/count.json', {
-      url: decodeURIComponent(Sharebuttons.prototype.parseHref(button).parameters.url)
+  fetchCount: function (button, callback) {
+    JSONP.get('https://cdn.api.twitter.com/1/urls/count.json', {
+      url: decodeURIComponent(parseLink(button).parameters.url)
     }, function (result) {
       callback(result.count);
     });
   }
 };
 
-},{"../sharebuttons.js":6}],6:[function(require,module,exports){
+},{"../utils/jsonp.js":7,"../utils/parselink.js":9}],6:[function(require,module,exports){
 /*jslint browser: true*/
+var mergeobjects = require('./utils/mergeobjects.js'),
+  parseLink = require('./utils/parselink.js');
 
-var JSONP = require('./utils/jsonp.js'),
-  urlvars = require('./utils/urlvars.js'),
-  mergeobjects = require('./utils/mergeobjects.js'),
-  addEvent = require('./utils/addEvent.js');
+function basicProviderVerification(button, id) {
+  var returnVal = false;
+  if (parseLink(button).hostname.indexOf(id) !== -1) {
+    returnVal = true;
+  }
+  return returnVal;
+}
 
 var Sharebuttons = function (selector, options) {
   this.settings = mergeobjects(this.defaults, options || {});
   this.buttons = document.querySelectorAll(selector);
-  this.assessButtons(this.buttons, this.providers);
+  this.prepButtons(this.buttons, this.providers);
 };
 
-
 Sharebuttons.prototype = {
-  providers: [],
+  providers: [], // array of provider plugins
 
   defaults: {
-    'loadedCountClass': 'sharebuttons-count-loaded',
-    'shareCountSelector': '[data-sharecount]',
-    'newWindow': true,
-    'defaultProviderId': 'unknown'
+    'loadedClass': 'sharebuttons-count-loaded', // class applied to the share button once the count is fetched
+    'countSelector': '[data-sharecount]', // selector for the child element that contains the count number
+    'newWindow': true, // determines whether a new window should be opened
+    'defaultProviderId': 'unknown', // if there is no provider plugin, the ID will default to this
+    'onShare': function () { return; } // This callback is dispatched after a share button is clicked on
   },
 
   settings: {}, // settings will be an object creating from defaults and user supplied settings
 
-  addProvider: function (provider) {
-    this.providers.push(provider);
-  },
-
-  assessButtons: function (buttons, providers) {
+  prepButtons: function (buttons, providers) {
     var i;
     // loop through buttons and update the DOM with provider info
     for (i = 0; i < buttons.length; i = i + 1) {
-      this.updateDOM(buttons[i], this.checkProviders(buttons[i], providers));
+      this.updateDOM(buttons[i], this.findProvider(buttons[i], providers));
     }
   },
 
-  checkProviders: function (button, providers) {
+  findProvider: function (button, providers) {
     var i, validProvider;
 
     // loop through the providers and see if the button matches any of them
     for (i = 0; i < providers.length; i = i + 1) {
-      if (providers[i].neededBy(button)) {
+      if ((providers[i].neededBy && providers[i].neededBy(button)) || (providers[i].id && basicProviderVerification(button, providers[i].id))) {
         validProvider = providers[i];
       }
     }
@@ -132,77 +109,51 @@ Sharebuttons.prototype = {
   updateDOM: function (button, provider) {
     var that = this;
 
-
-    addEvent(button, 'click', function (ev) {
+    button.addEventListener('click', function (ev) {
       // if we're opening a new window then cancel default behaviour
       // but we'll let IE8 fallback to a default link
       if (that.settings.newWindow === true && ev.preventDefault) {
-        if (ev.preventDefault && ev.stopPropagation) {
-          ev.preventDefault();
-          ev.stopPropagation();
+        ev.preventDefault();
+        ev.stopPropagation();
 
-          window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
+        window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
 
-          // if there's a callback for sharing trigger it with some data
-          if (that.settings.onShare) {
-            that.settings.onShare({
-              provider: provider ? provider.id : that.settings.defaultProviderId
-            });
-          } // end if onShare
-        }
-
+        // if there's a callback for sharing trigger it with some data
+        that.settings.onShare({
+          provider: provider ? provider.id : that.settings.defaultProviderId
+        });
       } // end if newWindow
     }, false);
 
-
-
     // only fetch the count if there's a dom element for it to go in
-    if (button.querySelector(that.settings.shareCountSelector)) {
-      provider.fetchShareCount(button, function (count) {
-        that.insertCounter(button, count);
+    if (button.querySelector(that.settings.countSelector)) {
+      provider.fetchCount(button, function (count) {
+        that.insertCount(button, count);
       });
     }
   },
 
-  insertCounter: function (button, number) {
-    button.querySelector(this.settings.shareCountSelector).innerText = number;
-    button.className = button.className + this.settings.loadedCountClass;
+  insertCount: function (button, number) {
+    button.querySelector(this.settings.countSelector).innerText = number;
+    button.className += this.settings.loadedClass;
   },
 
-  parseHref: function (link) {
-    return {
-      hostname: link.hostname,
-      href: link.href,
-      parameters: urlvars(link.href)
-    };
+  addProvider: function (provider) {
+    this.providers.push(provider);
   },
 
-  basicProviderVerification: function (button, id) {
-    var returnVal = false, hrefData = this.parseHref(button);
-    if (hrefData.hostname.indexOf(id) !== -1) {
-      returnVal = true;
+  addProviders: function (providers) {
+    var i;
+    for (i = 0; i < providers.length; i = i + 1) {
+      this.addProvider(providers[i]);
     }
-    return returnVal;
-  },
-  jsonp: JSONP.get
+  }
 };
 
 module.exports = Sharebuttons;
 
-},{"./utils/addEvent.js":7,"./utils/jsonp.js":8,"./utils/mergeobjects.js":9,"./utils/urlvars.js":10}],7:[function(require,module,exports){
-function addEvent( obj, type, fn ) {
-  if ( obj.attachEvent ) {
-    obj['e'+type+fn] = fn;
-    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
-    obj.attachEvent( 'on'+type, obj[type+fn] );
-  } else
-    obj.addEventListener( type, fn, false );
-}
-
-module.exports = addEvent;
-
-},{}],8:[function(require,module,exports){
-var JSONP = (function () {
+},{"./utils/mergeobjects.js":8,"./utils/parselink.js":9}],7:[function(require,module,exports){
+module.exports = (function () {
   var counter = 0,
     head,
     window = this,
@@ -281,25 +232,38 @@ var JSONP = (function () {
   };
 }());
 
-module.exports = JSONP;
-
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
  * @param obj1
  * @param obj2
  * @returns obj3 a new object based on obj1 and obj2
  */
-
-module.exports = function (obj1,obj2){
-    var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-    return obj3;
+module.exports = function (obj1, obj2) {
+  var obj3 = {},
+    attrname;
+  for (attrname in obj1) {
+    obj3[attrname] = obj1[attrname];
+  }
+  for (attrname in obj2) {
+    obj3[attrname] = obj2[attrname];
+  }
+  return obj3;
 };
 
-},{}],10:[function(require,module,exports){
-function getUrlVars(href) {
+},{}],9:[function(require,module,exports){
+var urlvars = require('./urlvars.js');
+
+module.exports = function (link) {
+  return {
+    hostname: link.hostname,
+    href: link.href,
+    parameters: urlvars(link.href)
+  };
+}
+
+},{"./urlvars.js":10}],10:[function(require,module,exports){
+module.exports = function (href) {
   var vars = [],
     hash,
     i,
@@ -310,8 +274,6 @@ function getUrlVars(href) {
     vars[hash[0]] = hash[1];
   }
   return vars;
-}
-
-module.exports = getUrlVars;
+};
 
 },{}]},{},[1]);
