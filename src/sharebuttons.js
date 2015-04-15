@@ -37,9 +37,13 @@ Sharebuttons.prototype = {
     }
 
     for (i = 0; i < buttons.length; i = i + 1) {
-      // add click handler to buttons to make them pop up
       buttons[i].addEventListener('click', eventHandler, false);
-      this.checkProviders(buttons[i], providers);
+
+      if (buttons[i].querySelector('[data-sharecount]')) {
+        // add click handler to buttons to make them pop up
+        this.checkProviders(buttons[i], providers);
+      }
+
     }
   },
 
