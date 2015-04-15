@@ -2,23 +2,15 @@
 
 var JSONP = require('./utils/jsonp.js'),
   urlvars = require('./utils/urlvars.js'),
-  mergeobjects = require('./utils/mergeobjects.js');
+  mergeobjects = require('./utils/mergeobjects.js'),
+  addEvent = require('./utils/addEvent.js');
 
 var Sharebuttons = function (selector, options) {
   this.settings = mergeobjects(this.defaults, options || {});
   this.buttons = document.querySelectorAll(selector);
   this.assessButtons(this.buttons, this.providers);
-
 };
 
-function addEvent( obj, type, fn ) {
-  if ( obj.attachEvent ) {
-    obj['e'+type+fn] = fn;
-    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
-    obj.attachEvent( 'on'+type, obj[type+fn] );
-  } else
-    obj.addEventListener( type, fn, false );
-}
 
 Sharebuttons.prototype = {
   providers: [],

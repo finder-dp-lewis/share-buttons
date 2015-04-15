@@ -82,23 +82,15 @@ module.exports = {
 
 var JSONP = require('./utils/jsonp.js'),
   urlvars = require('./utils/urlvars.js'),
-  mergeobjects = require('./utils/mergeobjects.js');
+  mergeobjects = require('./utils/mergeobjects.js'),
+  addEvent = require('./utils/addEvent.js');
 
 var Sharebuttons = function (selector, options) {
   this.settings = mergeobjects(this.defaults, options || {});
   this.buttons = document.querySelectorAll(selector);
   this.assessButtons(this.buttons, this.providers);
-
 };
 
-function addEvent( obj, type, fn ) {
-  if ( obj.attachEvent ) {
-    obj['e'+type+fn] = fn;
-    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
-    obj.attachEvent( 'on'+type, obj[type+fn] );
-  } else
-    obj.addEventListener( type, fn, false );
-}
 
 Sharebuttons.prototype = {
   providers: [],
@@ -192,7 +184,19 @@ Sharebuttons.prototype = {
 
 module.exports = Sharebuttons;
 
-},{"./utils/jsonp.js":7,"./utils/mergeobjects.js":8,"./utils/urlvars.js":9}],7:[function(require,module,exports){
+},{"./utils/addEvent.js":7,"./utils/jsonp.js":8,"./utils/mergeobjects.js":9,"./utils/urlvars.js":10}],7:[function(require,module,exports){
+function addEvent( obj, type, fn ) {
+  if ( obj.attachEvent ) {
+    obj['e'+type+fn] = fn;
+    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+    obj.attachEvent( 'on'+type, obj[type+fn] );
+  } else
+    obj.addEventListener( type, fn, false );
+}
+
+module.exports = addEvent;
+
+},{}],8:[function(require,module,exports){
 var JSONP = (function () {
   var counter = 0,
     head,
@@ -274,7 +278,7 @@ var JSONP = (function () {
 
 module.exports = JSONP;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
  * @param obj1
@@ -289,7 +293,7 @@ module.exports = function (obj1,obj2){
     return obj3;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function getUrlVars(href) {
   var vars = [],
     hash,
