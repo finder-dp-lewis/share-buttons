@@ -134,6 +134,7 @@ Sharebuttons.prototype = {
 
 
     addEvent(button, 'click', function (ev) {
+      var target;
       // if we're opening a new window then cancel default behaviour
       if (that.settings.newWindow === true) {
         if (ev.preventDefault && ev.stopPropagation) {
@@ -143,7 +144,9 @@ Sharebuttons.prototype = {
           ev.returnValue = false; // thanks IE8          
         }
 
-        window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420');
+        target = ev.currentTarget || ev.srcElement;
+
+        window.open(target.href, 'sharebuttons', 'width=520,height=420');
 
         // if there's a callback for sharing trigger it with some data
         if (that.settings.onShare) {
