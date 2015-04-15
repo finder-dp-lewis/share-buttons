@@ -109,21 +109,23 @@ Sharebuttons.prototype = {
   updateDOM: function (button, provider) {
     var that = this;
 
-    button.addEventListener('click', function (ev) {
-      // if we're opening a new window then cancel default behaviour
-      // but we'll let IE8 fallback to a default link
-      if (that.settings.newWindow === true && ev.preventDefault) {
-        ev.preventDefault();
-        ev.stopPropagation();
+    if (button.addEventListener) {
+      button.addEventListener('click', function (ev) {
+        // if we're opening a new window then cancel default behaviour
+        // but we'll let IE8 fallback to a default link
+        if (that.settings.newWindow === true && ev.preventDefault) {
+          ev.preventDefault();
+          ev.stopPropagation();
 
-        window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
+          window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420,resizable=yes,scrollbars=yes');
 
-        // if there's a callback for sharing trigger it with some data
-        that.settings.onShare({
-          provider: provider ? provider.id : that.settings.defaultProviderId
-        });
-      } // end if newWindow
-    }, false);
+          // if there's a callback for sharing trigger it with some data
+          that.settings.onShare({
+            provider: provider ? provider.id : that.settings.defaultProviderId
+          });
+        } // end if newWindow
+      }, false);
+    }
 
     // only fetch the count if there's a dom element for it to go in
     if (button.querySelector(that.settings.countSelector)) {
