@@ -6,11 +6,7 @@ module.exports = {
   id: 'facebook',
 
   neededBy: function (button) {
-    var returnVal = false, hrefData = Sharebuttons.prototype.parseHref(button);
-    if (hrefData.hostname.indexOf(this.id) !== -1) {
-      returnVal = true;
-    }
-    return returnVal;
+    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
   },
 
   fetchShareCount: function (button, callback) {

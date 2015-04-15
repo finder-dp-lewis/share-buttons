@@ -5,13 +5,7 @@ module.exports = {
   id: 'twitter',
 
   neededBy: function (button) {
-    var returnVal = false;
-
-    if (Sharebuttons.prototype.parseHref(button).hostname.indexOf(this.id) !== -1) {
-      returnVal = true;
-    }
-
-    return returnVal;
+    return Sharebuttons.prototype.basicProviderVerification(button, this.id);
   },
 
   fetchShareCount: function (button, callback) {

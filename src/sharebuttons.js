@@ -5,20 +5,32 @@ var JSONP = require('./utils/jsonp.js'),
   mergeobjects = require('./utils/mergeobjects.js');
 
 var Sharebuttons = function (selector, options) {
+  this.settings = mergeobjects(this.defaults, options || {});
   this.buttons = document.querySelectorAll(selector);
   this.assessButtons(this.buttons, this.providers);
-  this.settings = mergeobjects(this.defaults, options || {});
+
 };
+
+function addEvent( obj, type, fn ) {
+  if ( obj.attachEvent ) {
+    obj['e'+type+fn] = fn;
+    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+    obj.attachEvent( 'on'+type, obj[type+fn] );
+  } else
+    obj.addEventListener( type, fn, false );
+}
 
 Sharebuttons.prototype = {
   providers: [],
 
   defaults: {
     'loadedCountClass': 'sharebuttons-count-loaded',
-    'newWindow': true
+    'shareCountSelector': '[data-sharecount]',
+    'newWindow': true,
+    'defaultProviderId': 'unknown'
   },
 
-  settings: {},
+  settings: {}, // settings will be an object creating from defaults and user supplied settings
 
   addProvider: function (provider) {
     this.providers.push(provider);
@@ -26,9 +38,8 @@ Sharebuttons.prototype = {
 
   assessButtons: function (buttons, providers) {
     var i;
-    // loop through buttons and determine what provider
+    // loop through buttons and update the DOM with provider info
     for (i = 0; i < buttons.length; i = i + 1) {
-      // add click handler to buttons to make them pop up
       this.updateDOM(buttons[i], this.checkProviders(buttons[i], providers));
     }
   },
@@ -48,22 +59,28 @@ Sharebuttons.prototype = {
 
   updateDOM: function (button, provider) {
     var that = this;
-    button.addEventListener('click', function (ev) {
+
+
+    addEvent(button, 'click', function (ev) {
+      // if we're opening a new window then cancel default behaviour
       if (that.settings.newWindow === true) {
         ev.preventDefault();
         ev.stopPropagation();
         window.open(ev.currentTarget.href, 'sharebuttons', 'width=520,height=420');
 
+        // if there's a callback for sharing trigger it with some data
         if (that.settings.onShare) {
           that.settings.onShare({
-            provider: provider.id
+            provider: provider ? provider.id : that.settings.defaultProviderId
           });
-        }
-      }
+        } // end if onShare
+      } // end if newWindow
     }, false);
 
+
+
     // only fetch the count if there's a dom element for it to go in
-    if (button.querySelector('[data-sharecount]')) {
+    if (button.querySelector(that.settings.shareCountSelector)) {
       provider.fetchShareCount(button, function (count) {
         that.insertCounter(button, count);
       });
@@ -71,20 +88,25 @@ Sharebuttons.prototype = {
   },
 
   insertCounter: function (button, number) {
-    button.querySelector('[data-sharecount]').innerText = number;
+    button.querySelector(this.settings.shareCountSelector).innerText = number;
     button.classList.add(this.settings.loadedCountClass);
   },
 
-  parseHref: function (button) {
-    var hrefData = {
-      hostname: button.hostname,
-      href: button.href,
-      parameters: urlvars(button.href)
+  parseHref: function (link) {
+    return {
+      hostname: link.hostname,
+      href: link.href,
+      parameters: urlvars(link.href)
     };
-
-    return hrefData;
   },
 
+  basicProviderVerification: function (button, id) {
+    var returnVal = false, hrefData = this.parseHref(button);
+    if (hrefData.hostname.indexOf(id) !== -1) {
+      returnVal = true;
+    }
+    return returnVal;
+  },
   jsonp: JSONP.get
 };
 
