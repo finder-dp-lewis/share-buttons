@@ -1,5 +1,8 @@
 /*global Sharebuttons*/
-Sharebuttons.prototype.addProvider({
+
+var Sharebuttons = require('../sharebuttons.js');
+
+module.exports = {
   'id': 'facebook',
 
   'neededBy': function (button) {
@@ -9,6 +12,7 @@ Sharebuttons.prototype.addProvider({
     }
     return returnVal;
   },
+
   fetchShareCount: function (button, callback) {
     Sharebuttons.prototype.jsonp('https://graph.facebook.com', {
       id: decodeURIComponent(Sharebuttons.prototype.parseHref(button).parameters.u)
@@ -16,4 +20,4 @@ Sharebuttons.prototype.addProvider({
       callback(result.shares);
     });
   }
-});
+};

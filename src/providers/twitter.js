@@ -1,5 +1,7 @@
 /*global Sharebuttons*/
-Sharebuttons.prototype.addProvider({
+var Sharebuttons = require('../sharebuttons.js');
+
+module.exports = {
   id: 'twitter',
 
   neededBy: function (button) {
@@ -19,4 +21,4 @@ Sharebuttons.prototype.addProvider({
       callback(result.count);
     });
   }
-});
+};
