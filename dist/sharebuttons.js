@@ -73,7 +73,6 @@ if (!window.CustomEvent) {
   }());
 }
 
-
 function basicProviderVerification(button, id) {
   var returnVal = false;
   if (button.hostname.indexOf(id) !== -1) {

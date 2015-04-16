@@ -25,6 +25,11 @@ describe('sharebuttons', function () {
     linkEl = elem.querySelector('[data-sharebutton]');
   });
 
+  afterEach(function () {
+    linkEl.removeEventListener('shareCountLoaded');
+    body.removeChild(elem);
+  });
+
   it('should update counter with a number', function (done) {
     linkEl.addEventListener('shareCountLoaded', function () {
       expect(countEl.innerText).not.toBe('Not Loaded');
@@ -32,11 +37,6 @@ describe('sharebuttons', function () {
     }, false);
 
     var sharebuttons = new Sharebuttons('[data-sharebutton]');
-  });
-
-  afterEach(function () {
-    linkEl.removeEventListener('shareCountLoaded');
-    body.removeChild(elem);
   });
 
 });
