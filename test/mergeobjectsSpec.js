@@ -1,6 +1,4 @@
 /*global describe, it, expect*/
-'use strict';
-
 var mergeobjects = require('../src/util/mergeobjects.js');
 
 describe('mergeobjects', function () {

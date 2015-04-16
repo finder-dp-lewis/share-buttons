@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jshint ./src && ./node_modules/.bin/karma start",
+    "test": "./node_modules/.bin/jshint --verbose ./src && ./node_modules/.bin/jshint --verbose ./test && ./node_modules/.bin/karma start",
     "start": "./node_modules/.bin/browserify ./src/app.js -o ./dist/sharebuttons.js && ./node_modules/.bin/uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js -m"
   },
   "repository": {
