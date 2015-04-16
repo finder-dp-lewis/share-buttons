@@ -36,11 +36,19 @@
 
 <script src="../dist/sharebuttons.min.js"></script>
 <script>
+  var example = document.querySelector('[data-sharebutton]');
+
+  example.addEventListener('shareCountLoaded', function (ev) {
+    console.log(ev);
+  });
+
 	var sharebuttons = new Sharebuttons('[data-sharebutton]', {
 		'onShare': function (result) {
 			console.log(result);
 		}
 	});
+
+
 </script>
 
 </body>
