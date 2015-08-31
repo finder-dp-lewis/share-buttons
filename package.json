@@ -1,6 +1,6 @@
 {
   "name": "barebones-share-buttons",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A light weight library to fetch social sharing information from APIs that support JSONP",
   "scripts": {
     "lint": "jshint --verbose ./src & jshint --verbose ./test",
