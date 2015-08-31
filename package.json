@@ -1,11 +1,14 @@
 {
   "name": "barebones-share-buttons",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "A light weight library to fetch social sharing information from APIs that support JSONP",
   "scripts": {
     "lint": "jshint --verbose ./src & jshint --verbose ./test",
     "test": "npm run lint && karma start",
-    "build": "rm -rf ./dist && mkdir ./dist && browserify ./src/app.js -o ./dist/sharebuttons.js && uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js -m"
+    "build": "rm -rf ./dist && mkdir ./dist && browserify ./src/app.js -o ./dist/sharebuttons.js && uglifyjs ./dist/sharebuttons.js -o ./dist/sharebuttons.min.js -m",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist --force",
+    "postversion": "git push && git push --tags && rm -rf ./dist"
   },
   "repository": {
     "type": "git",
