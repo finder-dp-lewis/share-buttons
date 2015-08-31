@@ -1,6 +1,6 @@
 {
   "name": "barebones-share-buttons",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A light weight library to fetch social sharing information from APIs that support JSONP",
   "scripts": {
     "clean": "rm -rf ./dist && mkdir ./dist",
